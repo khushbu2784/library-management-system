@@ -1,0 +1,14 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Doctor Authentication & Access Code API",
+    "version": "1.0.0",
+    "title": "Doctor Auth & Access Code API"
+  },
+  "host": "localhost:4001",
+  "basePath": "/api/v1",
+  "schemes": ["http"],
+  "paths": {
+  
+  }
+}
