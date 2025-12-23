@@ -12,3 +12,15 @@ const userSchema = new mongoose.Schema(
 );
 
 export default mongoose.model("User", userSchema);
+
+
+// {
+//   "fullName": "Khushi",
+//   "email": "khushiadmin1@gmail.com",
+//   "password": "Admin@123",
+//   "phoneNumber": "9999999999",
+//   "role": "admin"
+// }
+
+//  "email": "khushiadmin1@gmail.com",
+//   "password": "Admin@123"

@@ -1,25 +1,26 @@
-export const validateSignup = ({ firstName, lastName, email, password, phoneNumber }) => {
+export const validateSignup = ({ fullName, email, password, phoneNumber }) => {
   const errors = {};
-  const nameRegex = /^[A-Za-z]{2,15}$/;
+  const nameRegex = /^[A-Za-z ]{2,30}$/;
   const emailRegex = /^\S+@\S+\.\S+$/;
   const phoneRegex = /^[6-9]\d{9}$/;
-  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
 
-  if (!firstName) errors.firstName = "First name is required";
-  else if (!nameRegex.test(firstName)) errors.firstName = "Only letters (2–15 chars)";
-
-  if (!lastName) errors.lastName = "Last name is required";
-  else if (!nameRegex.test(lastName)) errors.lastName = "Only letters (2–15 chars)";
+  if (!fullName) errors.fullName = "Full name is required";
+  else if (!nameRegex.test(fullName))
+    errors.fullName = "Only letters, min 2 characters";
 
   if (!email) errors.email = "Email is required";
   else if (!emailRegex.test(email)) errors.email = "Invalid email format";
 
   if (!phoneNumber) errors.phoneNumber = "Phone number is required";
-  else if (!phoneRegex.test(phoneNumber)) errors.phoneNumber = "Enter valid 10-digit mobile starting with 6–9";
+  else if (!phoneRegex.test(phoneNumber))
+    errors.phoneNumber = "Enter valid 10-digit mobile number";
 
   if (!password) errors.password = "Password is required";
   else if (!passwordRegex.test(password))
-    errors.password = "Password must be 6+ chars, include uppercase, lowercase, number & special char";
+    errors.password =
+      "Password must include upper, lower, number & special char";
 
   return errors;
 };

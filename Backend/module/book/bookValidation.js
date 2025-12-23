@@ -9,15 +9,21 @@ export const validateCreateBook = (data) => {
     errors.author = "Author is required";
   }
 
-  if (data.publishedDate && isNaN(Date.parse(data.publishedDate))) {
-    errors.publishedDate = "Invalid published date";
+  // publicationYear (number)
+  if (data.publicationYear && isNaN(Number(data.publicationYear))) {
+    errors.publicationYear = "Publication year must be a number";
   }
 
-  if (data.pages && typeof data.pages !== "number") {
+  // pages (number)
+  if (data.pages && isNaN(Number(data.pages))) {
     errors.pages = "Pages must be a number";
   }
 
-  if (data.isAvailable !== undefined && typeof data.isAvailable !== "boolean") {
+  // isAvailable (boolean)
+  if (
+    data.isAvailable !== undefined &&
+    !["true", "false", true, false].includes(data.isAvailable)
+  ) {
     errors.isAvailable = "isAvailable must be true or false";
   }
 
@@ -35,15 +41,18 @@ export const validateUpdateBook = (data) => {
     errors.author = "Author cannot be empty";
   }
 
-  if (data.publishedDate && isNaN(Date.parse(data.publishedDate))) {
-    errors.publishedDate = "Invalid published date";
+  if (data.publicationYear && isNaN(Number(data.publicationYear))) {
+    errors.publicationYear = "Publication year must be a number";
   }
 
-  if (data.pages && typeof data.pages !== "number") {
+  if (data.pages && isNaN(Number(data.pages))) {
     errors.pages = "Pages must be a number";
   }
 
-  if (data.isAvailable !== undefined && typeof data.isAvailable !== "boolean") {
+  if (
+    data.isAvailable !== undefined &&
+    !["true", "false", true, false].includes(data.isAvailable)
+  ) {
     errors.isAvailable = "isAvailable must be true or false";
   }
 

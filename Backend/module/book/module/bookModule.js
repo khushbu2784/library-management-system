@@ -28,16 +28,64 @@ export const getAllBooksModule = async (filters) => {
 };
 
 // Add book
+// export const addBookModule = async (data) => {
+//   try {
+//     const newBook = await Book.create({ ...data, isAvailable: true });
+//     return {
+//       statusCode: Codes.CREATED,
+//       message: "Book added successfully",
+//       data: { book: newBook },
+//     };
+//   } catch (error) {
+//     return handleError(error, "Add Book Module Error");
+//   }
+// };
 export const addBookModule = async (data) => {
   try {
-    const newBook = await Book.create({ ...data, isAvailable: true });
+   const book = await Book.create({
+      title: data.title,
+      author: data.author,
+      genre: data.genre,
+      publicationYear: Number(data.publicationYear), // ✅ REQUIRED
+      description: data.description,
+      coverImageUrl: data.coverImageUrl,
+      isAvailable: data.isAvailable === "true" || data.isAvailable === true, // ✅ boolean
+    });
+
     return {
       statusCode: Codes.CREATED,
       message: "Book added successfully",
-      data: { book: newBook },
+      data: { book },
     };
   } catch (error) {
     return handleError(error, "Add Book Module Error");
+  }
+};
+
+// ✅ UPDATE BOOK MODULE
+export const updateBookModule = async (bookId, data) => {
+  try {
+    const updatedBook = await Book.findByIdAndUpdate(
+      bookId,
+      { $set: data },
+      { new: true }
+    );
+
+    if (!updatedBook) {
+      return {
+        statusCode: Codes.NOT_FOUND,
+        message: "Book not found",
+        data: null,
+      };
+    }
+
+    return {
+      statusCode: Codes.SUCCESS,
+      message: "Book updated successfully",
+      data: { book: updatedBook },
+    };
+  } catch (error) {
+    return handleError(error, "Update Book Module Error");
   }
 };
 
@@ -64,26 +112,26 @@ export const getSingleBookModule = async (id) => {
 };
 
 // Update book
-export const updateBookModule = async (id, data) => {
-  try {
-    const updatedBook = await Book.findByIdAndUpdate(id, data, { new: true });
+// export const updateBookModule = async (id, data) => {
+//   try {
+//     const updatedBook = await Book.findByIdAndUpdate(id, data, { new: true });
 
-    if (!updatedBook)
-      return {
-        statusCode: Codes.NOT_FOUND,
-        message: "Book not found",
-        data: null,
-      };
+//     if (!updatedBook)
+//       return {
+//         statusCode: Codes.NOT_FOUND,
+//         message: "Book not found",
+//         data: null,
+//       };
 
-    return {
-      statusCode: Codes.SUCCESS,
-      message: "Book updated successfully",
-      data: { book: updatedBook },
-    };
-  } catch (error) {
-    return handleError(error, "Update Book Module Error");
-  }
-};
+//     return {
+//       statusCode: Codes.SUCCESS,
+//       message: "Book updated successfully",
+//       data: { book: updatedBook },
+//     };
+//   } catch (error) {
+//     return handleError(error, "Update Book Module Error");
+//   }
+// };
 
 // Delete book
 export const deleteBookModule = async (id) => {

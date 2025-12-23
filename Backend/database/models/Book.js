@@ -9,6 +9,11 @@ const bookSchema = new mongoose.Schema(
     coverImageUrl: { type: String },
     summary: { type: String },
     isAvailable: { type: Boolean, default: true },
+    borrowedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      default: null,
+    }
   },
   { timestamps: true }
 );

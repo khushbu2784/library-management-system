@@ -113,3 +113,18 @@ export const logoutModule = async (userId) => {
     handleError(error, "Logout Module Error");
   }
 };
+
+//fetch all users
+export const getAllUsersModule = async () => {
+  try {
+    const users = await User.find({role:{$ne:"admin"}}).select("-password");
+    return {
+      statusCode: Codes.SUCCESS,
+      message: "Users fetched successfully",
+      data: users,
+    };
+  } catch (error) {
+    console.error("Fetch Users Error:", error);
+    handleError(error, "Fetch All Users Module Error");
+  }
+};

@@ -1,6 +1,6 @@
 import { sendResponse, decryption } from "../../../middleware/headerValidator.js";
 import Codes from "../../../config/statusCodes.js";
-import { signupModule, loginModule ,logoutModule} from "../module/authModule.js";
+import { signupModule, loginModule ,logoutModule, getAllUsersModule} from "../module/authModule.js";
 import { validateLogin, validateSignup } from "../authValidation.js"
 import { handleError } from "../../../utils/errorHandler.js";
 
@@ -43,5 +43,14 @@ export const logoutUser = async (req, res) => {
     return sendResponse(res, result.statusCode, result.message, result.data);
   } catch (error) {
     handleError(error, "Logout Controller");
+  }
+};
+
+export const getallUsers = async (req, res) => {
+  try {
+    const users = await getAllUsersModule();
+    return sendResponse(res, Codes.SUCCESS, "Users retrieved successfully", users);
+  } catch (error) {
+    return sendResponse(res, Codes.INTERNAL_ERROR, "Internal Server Error");
   }
 };

@@ -6,6 +6,7 @@ import {
   getUserBorrowHistoryModule,
   getOverdueModule,
   getBorrowByIdModule,
+  getAllBorrowModule
 } from "../module/borrowModule.js";
 import { validateReturn } from "../borrowValidation.js";
 import { handleError } from "../../../utils/errorHandler.js";
@@ -74,6 +75,17 @@ export const getBorrowById = async (req, res) => {
     return sendResponse(res, result.statusCode, result.message, result.data);
   } catch (error) {
     handleError(error, "Get Borrow By Id Controller Error");
+    return sendResponse(res, Codes.INTERNAL_ERROR, "Internal Server Error");
+  }
+};
+
+export const adminGetAllHistory = async (req, res) => {
+  try {
+    const result = await getAllBorrowModule();
+    return sendResponse(res, result.statusCode, result.message, result.data);
+  }
+  catch (error) {
+    handleError(error, "Admin Get All History Controller Error");
     return sendResponse(res, Codes.INTERNAL_ERROR, "Internal Server Error");
   }
 };

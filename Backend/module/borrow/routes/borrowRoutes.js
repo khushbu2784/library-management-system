@@ -6,6 +6,7 @@ import {
   getUserHistory,
   getOverdue,
   getBorrowById,
+  adminGetAllHistory,
 } from "../controller/borrowController.js";
 
 const router = express.Router();
@@ -15,6 +16,7 @@ router.post("/return", verifyToken, returnBook);
 
 router.get("/history", verifyToken, getUserHistory);
 
+router.get("/admin/history", verifyToken, verifyAdmin, adminGetAllHistory);
 router.get("/admin/overdue", verifyToken, verifyAdmin, getOverdue);
 router.get("/admin/:borrowId", verifyToken, verifyAdmin, getBorrowById);
 

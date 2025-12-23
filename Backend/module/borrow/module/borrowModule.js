@@ -4,18 +4,72 @@ import Codes from "../../../config/statusCodes.js";
 import { handleError } from "../../../utils/errorHandler.js";
 
 //borrow book
+// export const borrowBookModule = async ({ userId, bookId }) => {
+//   try {
+//     const book = await Book.findById(bookId);
+//     if (!book) {
+//       return { statusCode: Codes.NOT_FOUND, message: "Book not found", data: null };
+//     }
+
+//     if (!book.isAvailable) {
+//       return { statusCode: Codes.CONFLICT, message: "Book is not available", data: null };
+//     }
+
+//     // AUTO-GENERATE due date (14 days from now)
+//     const borrowedDate = new Date();
+//     const dueDate = new Date();
+//     dueDate.setDate(dueDate.getDate() + 7);
+
+//     const borrow = await Borrow.create({
+//       userId,
+//       bookId,
+//       borrowedDate,
+//       dueDate,
+//       status: "borrowed",
+//     });
+
+//     // update book availability
+//     book.isAvailable = false;
+//     book.borrowedBy = userId;
+//     await book.save();
+
+//     return { statusCode: Codes.CREATED, message: "Book borrowed successfully", data: { borrow } };
+//   } catch (error) {
+//     return handleError(error, "Borrow Book Module Error");
+//   }
+// };
 export const borrowBookModule = async ({ userId, bookId }) => {
   try {
-    const book = await Book.findById(bookId);
+    // Check duplicate borrow
+    const existingBorrow = await Borrow.findOne({
+      userId,
+      bookId,
+      status: "borrowed",
+    });
+
+    if (existingBorrow) {
+      return {
+        statusCode: Codes.CONFLICT,
+        message: "You have already borrowed this book",
+        data: null,
+      };
+    }
+
+    // Atomic book lock
+    const book = await Book.findOneAndUpdate(
+      { _id: bookId, isAvailable: true },
+      { isAvailable: false, borrowedBy: userId },
+      { new: true }
+    );
+
     if (!book) {
-      return { statusCode: Codes.NOT_FOUND, message: "Book not found", data: null };
+      return {
+        statusCode: Codes.CONFLICT,
+        message: "Book is not available",
+        data: null,
+      };
     }
 
-    if (!book.isAvailable) {
-      return { statusCode: Codes.CONFLICT, message: "Book is not available", data: null };
-    }
-
-    // AUTO-GENERATE due date (14 days from now)
     const borrowedDate = new Date();
     const dueDate = new Date();
     dueDate.setDate(dueDate.getDate() + 7);
@@ -28,15 +82,16 @@ export const borrowBookModule = async ({ userId, bookId }) => {
       status: "borrowed",
     });
 
-    // update book availability
-    book.isAvailable = false;
-    await book.save();
-
-    return { statusCode: Codes.CREATED, message: "Book borrowed successfully", data: { borrow } };
+    return {
+      statusCode: Codes.CREATED,
+      message: "Book borrowed successfully",
+      data: { borrow },
+    };
   } catch (error) {
     return handleError(error, "Borrow Book Module Error");
   }
 };
+
 
 //RETURN BOOK
 export const returnBookModule = async ({ userId, bookId }) => {
@@ -53,6 +108,7 @@ export const returnBookModule = async ({ userId, bookId }) => {
     const book = await Book.findById(bookId);
     if (book) {
       book.isAvailable = true;
+      book.borrowedBy = null;
       await book.save();
     }
 
@@ -119,5 +175,17 @@ export const getBorrowByIdModule = async (id) => {
     return { statusCode: Codes.SUCCESS, message: "Record fetched", data: { borrow } };
   } catch (error) {
     return handleError(error, "Get Borrow By Id Module Error");
+  }
+};
+
+export const getAllBorrowModule = async () => {
+  try {
+    const history = await Borrow.find()
+      .populate("bookId", "title author genre coverImageUrl")
+      .populate("userId", "fullName email")
+      .sort({ createdAt: -1 });
+    return { statusCode: Codes.SUCCESS, message: "All borrow records fetched", data: { history } };
+  } catch (error) {
+    return handleError(error, "Get All Borrow Module Error");
   }
 };
